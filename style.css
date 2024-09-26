@@ -1,0 +1,193 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: transparent;
+}
+
+.stApp {
+    max-width: 100%;
+    margin: 0;
+    padding: 2rem;
+    background-color: transparent;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.reportview-container {
+    background-color: transparent;
+}
+
+.reportview-container .main {
+    background-color: transparent;
+}
+
+.reportview-container .main .block-container {
+    background-color: transparent;
+}
+
+.stNavigation {
+    background-color: transparent !important;
+}
+
+.stNavigation .css-218ufz, 
+.stNavigation .css-f0ifqm, 
+.stNavigation .css-jc4t97 {
+    background-color: transparent !important;
+}
+
+/* Word-by-word animation for "Welcome to Health & Nutrition Analyzer" */
+.animated-text {
+    opacity: 0;
+    animation: fade-in 1s ease-in-out forwards;
+}
+
+@keyframes fade-in {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animated-text span {
+    display: inline-block;
+    animation: slide-in 0.5s ease-in-out forwards;
+}
+
+@keyframes slide-in {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Responsive styles */
+@media (max-width: 767px) {
+    .stApp {
+        padding: 1rem;
+    }
+
+    .animated-text {
+        font-size: 1.5rem;
+    }
+
+    .stButton > button {
+        font-size: 0.9rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .stApp {
+        padding: 2rem;
+    }
+
+    .animated-text {
+        font-size: 2rem;
+    }
+
+    .stButton > button {
+        font-size: 1rem;
+    }
+}
+
+h1, h2, h3 {
+    color: #4CAF50;
+}
+
+.stButton > button {
+    background-color: transparent;
+    color: white;
+    border: 3px solid #4CAF50;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: 900;
+    transition: all 0.3s ease;
+}
+
+/* Hover styles for buttons: text turns black, border turns lime */
+.stButton > button:hover {
+    background-color: transparent;  /* Change background color */
+    color: lime;  /* Text color turns black */
+    border: 6px solid lime;  /* Border becomes lime */
+    transform: translateY(-2px);  /* Lift effect */
+    box-shadow: 0 4px 6px rgba(74, 128, 35, 0.1);  /* Subtle shadow */
+}
+
+/* Translation box, edit profile toggle, upload image box */
+.stSelectbox > div > div > select,
+.stCheckbox > label,
+.stFileUploader > div {
+    background-color: black !important;
+    color: #45a049 !important;
+}
+
+/* Register section specific styles */
+[data-testid="stNumberInput"] > div > div > input,
+[data-testid="stSelectbox"] > div > div > select,
+.stButton > button[kind="primaryFormSubmit"] {
+    background-color: #45a049 !important;
+    color: #000 !important;
+}
+
+/* Black spinner */
+.stSpinner > div > div {
+    border-top-color: black !important;
+}
+
+/* Add this to center-align elements on the home page */
+.home-container {
+    text-align: center; /* Center-align text */
+}
+
+/* Add this for the heading shadow effect */
+h1.animated-text {
+    text-shadow: 2px 2px 5px black; /* Black shadow border effect */
+}
+
+/* Center-align subtext and buttons in the home page */
+.home-container .subtext, /* Assuming the subtext has a class of 'subtext' */
+.stButton {
+    text-align: center; /* Center-align text */
+}
+
+/* Add 3D effect to the heading in the home page */
+h1.animated-text {
+    text-shadow: 2px 2px 5px black, 0 0 25px #174919, 0 0 5px #00ff08; /* 3D shadow effect */
+}
+
+/* Increase size of heading in the home page */
+.home-container h1.animated-text {
+    font-size: 4.5rem; /* Adjust the size as needed */
+}
+
+/* Increase size of subtext in the home page */
+.home-container .subtext {
+    text-align: center;
+    font-size: 1rem; /* Adjust the size as needed */
+    margin-top: 0.25rem; /* Optional: Add some space above the subtext */
+}
+
+/* Reduce distance between the two buttons in home page */
+.stButton {
+    margin: 0.5rem; /* Adjust margin to reduce distance */
+}
+
+/* Center-align buttons in the home page */
+.home-button-container {
+    display: flex;
+    justify-content: center; /* Center-align buttons */
+    margin-top: 1rem; /* Optional: Add some space above the buttons */
+}
+
+/* Ensure buttons are displayed inline */
+.stButton > button {
+    margin: 0 0.5rem; /* Adjust margin to reduce distance between buttons */
+}
+
