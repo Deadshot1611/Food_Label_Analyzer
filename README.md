@@ -36,3 +36,28 @@
    ```bash
    git clone https://github.com/yourusername/LabelWise.git
    cd LabelWise
+2.**Install Dependencies**:
+
+Ensure you have Python installed. Then, install the required Python packages by running:
+
+```bash
+pip install -r requirements.txt
+
+3. **Environment Setup**:
+
+You'll need to set up environment variables for MongoDB Atlas and any other API keys required.
+
+1. Create a `.env` file in the root directory of your project.
+2. Add your MongoDB connection string and any other secret keys in the `.env` file.
+
+Example:
+
+```bash
+MONGODB_URI=your_mongodb_uri
+SECRET_KEY=your_secret_key
+4. **Running the Application**:
+
+After setting up your environment and installing all required dependencies, you can run the LabelWise application using the following command:
+
+```bash
+streamlit run app.py
