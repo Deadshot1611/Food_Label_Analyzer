@@ -1,0 +1,10 @@
+pymongo
+llama-index
+llama-index-llms-mistralai
+easyocr
+translate
+llama-index-core
+llama-index-embeddings-huggingface
+python-dotenv
+streamlit_option_menu
+llama_index.llms.mistralai
