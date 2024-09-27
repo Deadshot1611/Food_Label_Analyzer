@@ -13,8 +13,10 @@ from llama_index.llms.mistralai import MistralAI
 from translate import Translator
 from dotenv import load_dotenv
 import re
+from streamlit.components.v1 import html
 import ast
 import json
+import uuid
 
 # Connect to MongoDB
 client = MongoClient(os.getenv("MONGODB_URI"))
@@ -323,6 +325,9 @@ def login():
 # Register page
 def register():
     st.markdown('<h2 style="font-size: 2.5rem;">User Registration</h2>', unsafe_allow_html=True)
+    st.info("Password must be at least 8 characters long and contain at least one uppercase letter, one digit, and one special character.")
+    
+    
     with st.form("registration_form"):
         name = st.text_input("Name *", key="register_name")
         email = st.text_input("Email *", key="register_email")
@@ -340,8 +345,17 @@ def register():
         submitted = st.form_submit_button("Register")
 
         if submitted:
+            # Check if email is already registered
+            existing_user = customer_collection.find_one({"email": email})
+            if existing_user:
+                st.error("This email is already registered. Please use a different email.")
+                return
+
+            # Validate password strength
             if password != confirm_password:
                 st.error("Passwords do not match!")
+            elif not validate_password_strength(password):
+                st.error("Password must be at least 8 characters long, contain one uppercase letter, one special character, and one digit.")
             else:
                 bmi = calculate_bmi(weight, height)
                 user_data = {
@@ -360,9 +374,29 @@ def register():
                 }
                 customer_collection.insert_one(user_data)
                 st.success(f"Registration successful! Your BMI is {bmi}. Please log in.")
-
+        
+def validate_password_strength(password):
+    if len(password) < 8:
+        return False
+    if not re.search(r'[A-Z]', password):
+        return False
+    if not re.search(r'\d', password):
+        return False
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return False
+    return True
+def is_valid_password(password):
+    return (len(password) >= 8 and
+            re.search(r"[A-Z]", password) and
+            re.search(r"\d", password) and
+            re.search(r"[!@#$%^&*(),.?\":{}|<>]", password))
+def check_email_exists(email):
+    existing_user = customer_collection.find_one({"email": email})
+    st.write(f"Checking email: {email}")
+    st.write(f"User exists: {existing_user is not None}")
+    return existing_user is not None
 def main():
-    st.set_page_config(layout="wide")
+    st.set_page_config(layout="wide", page_icon="🥑")
     add_video_background()
     local_css("style.css")
     
@@ -529,3 +563,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+favicon_html = """
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥑</text></svg>">
+"""
+html(favicon_html)
