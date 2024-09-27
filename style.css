@@ -67,32 +67,23 @@ body {
     }
 }
 
-/* Responsive styles */
+/* Responsive styles for mobile only */
 @media (max-width: 767px) {
     .stApp {
         padding: 1rem;
     }
 
-    .animated-text {
-        font-size: 1.5rem;
+    .home-container h1.animated-text {
+        font-size: 2.3rem !important;
+    }
+
+    .home-container .subtext {
+        font-size: 1rem !important;
     }
 
     .stButton > button {
-        font-size: 0.9rem;
-    }
-}
-
-@media (min-width: 768px) {
-    .stApp {
-        padding: 2rem;
-    }
-
-    .animated-text {
-        font-size: 2rem;
-    }
-
-    .stButton > button {
-        font-size: 1rem;
+        font-size: 0.8rem;
+        padding: 0.3rem 0.6rem;
     }
 }
 
@@ -113,11 +104,11 @@ h1, h2, h3 {
 
 /* Hover styles for buttons: text turns black, border turns lime */
 .stButton > button:hover {
-    background-color: transparent;  /* Change background color */
-    color: lime;  /* Text color turns black */
-    border: 6px solid lime;  /* Border becomes lime */
-    transform: translateY(-2px);  /* Lift effect */
-    box-shadow: 0 4px 6px rgba(74, 128, 35, 0.1);  /* Subtle shadow */
+    background-color: transparent;
+    color: lime;
+    border: 6px solid lime;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(74, 128, 35, 0.1);
 }
 
 /* Translation box, edit profile toggle, upload image box */
@@ -136,58 +127,53 @@ h1, h2, h3 {
     color: #000 !important;
 }
 
-/* Black spinner */
-.stSpinner > div > div {
-    border-top-color: black !important;
-}
 
 /* Add this to center-align elements on the home page */
 .home-container {
-    text-align: center; /* Center-align text */
+    text-align: center;
 }
 
 /* Add this for the heading shadow effect */
 h1.animated-text {
-    text-shadow: 2px 2px 5px black; /* Black shadow border effect */
+    text-shadow: 2px 2px 5px black;
 }
 
 /* Center-align subtext and buttons in the home page */
-.home-container .subtext, /* Assuming the subtext has a class of 'subtext' */
+.home-container .subtext,
 .stButton {
-    text-align: center; /* Center-align text */
+    text-align: center;
 }
 
 /* Add 3D effect to the heading in the home page */
 h1.animated-text {
-    text-shadow: 2px 2px 5px black, 0 0 25px #174919, 0 0 5px #00ff08; /* 3D shadow effect */
+    text-shadow: 2px 2px 5px black, 0 0 25px #174919, 0 0 5px #00ff08;
 }
 
 /* Increase size of heading in the home page */
 .home-container h1.animated-text {
-    font-size: 4.5rem; /* Adjust the size as needed */
+    font-size: 4.5rem;
 }
 
 /* Increase size of subtext in the home page */
 .home-container .subtext {
     text-align: center;
-    font-size: 1rem; /* Adjust the size as needed */
-    margin-top: 0.25rem; /* Optional: Add some space above the subtext */
+    font-size: 1.5rem;
+    margin-top: 0.25rem;
 }
 
 /* Reduce distance between the two buttons in home page */
 .stButton {
-    margin: 0.5rem; /* Adjust margin to reduce distance */
+    margin: 0.5rem;
 }
 
 /* Center-align buttons in the home page */
 .home-button-container {
     display: flex;
-    justify-content: center; /* Center-align buttons */
-    margin-top: 1rem; /* Optional: Add some space above the buttons */
+    justify-content: center;
+    margin-top: 1rem;
 }
 
 /* Ensure buttons are displayed inline */
 .stButton > button {
-    margin: 0 0.5rem; /* Adjust margin to reduce distance between buttons */
+    margin: 0 0.5rem;
 }
-
