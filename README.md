@@ -50,7 +50,7 @@ To get started, clone the LabelWise repository to your local machine:
 git clone https://github.com/yourusername/LabelWise.git
 cd LabelWise
 ```
-##2. Install Dependencies
+2. Install Dependencies
 Ensure you have Python installed on your system. Then, install the required Python packages using pip:
 ```sh
 pip install -r requirements.txt
