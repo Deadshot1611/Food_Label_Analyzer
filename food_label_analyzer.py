@@ -1,5 +1,6 @@
 import streamlit as st
 from streamlit_option_menu import option_menu
+from streamlit_extras.switch_page_button import switch_page
 import time
 import base64
 from pymongo import MongoClient
@@ -79,20 +80,20 @@ def analyze_with_llama_index(ocr_text, user_profile):
     query = query = """
 You are tasked with analyzing the contents of a food label and evaluating its healthiness for a specific user.
 
-1. Health Rating:
+1. **Health Rating:**
    - Give Rating in large size text
-   - Based on the corrected food label and the user's profile, assign a health rating on a scale from 1 to 10 (where 10 is the healthiest).
-   - Consider the user's dietary preferences, health goals, allergies, and activity level in your rating.
-   - *If the food contains any ingredients to which the user is allergic (e.g., peanuts for a nut allergy), assign a health rating of 0/10 and include a clear warning and also before doing this be double sure that the food has a substance to which the user is allergic *.
-   - If the user should avoid the food altogether, assign a rating from 1 to 4.
+   - Based on the corrected food label and the user's dietary preferences, health goals, allergies, and activity level, assign a health rating on a scale from 1 to 10 (where 10 is the healthiest).
+   - If the food contains any ingredients to which the user is allergic (e.g., food contains peanuts and user has a nut allergy), assign a health rating of **0/10** and include a clear warning and also before doing this be double sure that the food has a substance to which the user is allergic .
+   - If the food does not have an allergen to which the user is allergic to and yet the user should avoid the food altogether, assign a rating from 1 to 4.
    - If the user should consume the food in moderation, assign a rating from 5 to 7.
    - If the user can consume the food frequently, assign a rating from 8 to 10.
 
-2. Health Analysis:
-   - Detailed Breakdown: Present a statistical breakdown of the food's nutritional content (e.g., "The food contains 2% saturated fat, 12g sugar, and 10g protein"). Ensure all terms and values are correctly spelled and reflect the accurate content of the food item.
-   - Personalized Evaluation: Explain why the food item is either good or bad for the user based on their specific health profile. Double check if there actually is an item in food to which user is allergic to.  Identify any ingredients or nutritional aspects that align well or poorly with the user's dietary needs (e.g., "This food is high in sugar, which may not align with your goal of maintaining stable blood sugar levels"). **If the food contains an allergen, make sure to emphasize that.ze the risk for the user.
-   - Advice: Provide guidance on whether the user should consume this food frequently, in moderation, or avoid it altogether, considering their health goals, dietary restrictions, and any allergens. **If the food contains an allergen, recommend avoiding it entirely and issue a warning in the conclusion.
+2. **Health Analysis:**
+   - *Detailed Breakdown*: Present a statistical breakdown of the food's nutritional content in bullet format (e.g., "The food contains 2% saturated fat, 12g sugar, and 10g protein"). Ensure all terms and values are correctly spelled and reflect the accurate content of the food item.
+   - *Personalized Evaluation*: Explain why the food item is either good or bad for the user based on their specific health profile. Double check if there actually is an item in food to which user is allergic to.  Identify any ingredients or nutritional aspects that align well or poorly with the user's dietary needs (e.g., "This food is high in sugar, which may not align with your goal of maintaining stable blood sugar levels"). **If the food contains an allergen, make sure to emphasize that.ze the risk for the user.
+   - *Advice*: Provide guidance on whether the user should consume this food frequently, in moderation, or avoid it altogether, considering their health goals, dietary restrictions, and any allergens. **If the food contains an allergen, recommend avoiding it entirely and issue a warning in the conclusion.
 
+if you mention any of the user's allergies or health conditions or health goals dont write them in list format if there is more than one. Just write them in a string.
 Ensure that the output is free from spelling mistakes and important points or warnings are clearly communicated with bold keywords and underline  relevant details.
 """
 
@@ -111,11 +112,11 @@ def analyze_food_label(image_path, email):
     if user:
         user_profile = {
             "BMI": user.get("bmi", "Not provided"),
-            "Allergies": ', '.join(user.get("allergies", [])),
-            "Health Conditions": user.get("health_conditions", "None"),
+            "Allergies": user.get("allergies", []),  # Now a list
+            "Health Conditions": user.get("health_conditions", []),  # Now a list
             "Dietary Preferences": user.get("dietary_preferences", "None"),
             "Activity Level": user.get("activity_level", "Moderate"),
-            "Health Goals": user.get("health_goals", "General well-being")
+            "Health Goals": user.get("health_goals", ["General well-being"])  # Assuming this is already a list
         }
 
         llama_output = analyze_with_llama_index(corrected_text, user_profile)
@@ -163,7 +164,7 @@ def update_product_database(ocr_text, product_type=None, consumption_frequency=N
     1. Correct any spelling mistakes or grammatical errors in the OCR text.
     2. Extract and structure the following information:
        - Product Name
-       - Brand Name (look for company names following by manufactured by or owned by or prduced by)
+       - Brand Name (look for company names following by "manufactured by" or "owned by" or "produced by")
        - Weight in Grams/ML
        - Nutritional information: Include the serving size (e.g., "per 100g", "per 200ml") as specified on the label. If multiple serving sizes are given, use the one that provides the most comprehensive nutritional breakdown.
        - Ingredients
@@ -212,7 +213,7 @@ def update_product_database(ocr_text, product_type=None, consumption_frequency=N
 
     return product_info
 
-# Custom CSS
+#Custom CSS
 def local_css(file_name):
     with open(file_name, "r") as f:
         st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
@@ -282,13 +283,44 @@ def home():
     col1, col2 = st.columns(2)
     with col1:
         if st.button("Get Started", key="get_started"):
-            st.session_state.page = "Register"
-            st.rerun()
+            st.session_state.show_steps = True
+            st.session_state.show_about = False
     with col2:
         if st.button("Learn More", key="learn_more"):
-            st.session_state.page = "About"
-            st.rerun()
+            st.session_state.show_about = True
+            st.session_state.show_steps = False
+            
+            
 
+    if 'show_steps' in st.session_state and st.session_state.show_steps:
+        with st.container():
+            if register():
+                st.session_state.show_steps = False
+                #st.rerun()
+            if st.button("Close Registration Form"):
+                st.session_state.show_steps = False
+                st.rerun()
+
+    if 'show_about' in st.session_state and st.session_state.show_about:
+        with st.container():
+            st.markdown('<h1 style="font-size: 2.5rem;">About LabelWise</h1>', unsafe_allow_html=True)
+            st.write("""
+            LabelWise is a food label analysis tool that empowers users to make informed health decisions. It focuses on the following key functionalities:
+
+            1. Food Label Scanning: Uses Optical Character Recognition (OCR) to scan and extract information from food labels quickly.
+            2. Nutritional Information: Provides detailed nutritional breakdowns, including calories, fats, carbohydrates, and protein content.
+            3. Health Evaluation: Assesses the healthiness of food items based on user profiles and dietary preferences.
+            4. Error Correction: Automatically corrects OCR errors to ensure accurate information.
+            5. Personalized Recommendations: Suggests healthier alternatives tailored to individual dietary needs and goals.
+            6. User-Friendly Design: Features an intuitive interface for easy navigation and quick access to information.
+
+            LabelWise is dedicated to helping users make healthier food choices by providing accurate, actionable insights directly from food labels.
+            Start your journey to a healthier you today!
+            """)
+        
+        if st.button("Close About Section"):
+            st.session_state.show_about = False
+            st.rerun()
 # About page
 def about():
     st.markdown('<h1 style="font-size: 3,5rem;">About LabelWise</h1>', unsafe_allow_html=True)
@@ -327,7 +359,6 @@ def register():
     st.markdown('<h2 style="font-size: 2.5rem;">User Registration</h2>', unsafe_allow_html=True)
     st.info("Password must be at least 8 characters long and contain at least one uppercase letter, one digit, and one special character.")
     
-    
     with st.form("registration_form"):
         name = st.text_input("Name *", key="register_name")
         email = st.text_input("Email *", key="register_email")
@@ -336,11 +367,16 @@ def register():
         age = st.number_input("Age *", min_value=1, max_value=120, key="register_age")
         height = st.number_input("Height (in cm) *", min_value=50, max_value=250, key="register_height")
         weight = st.number_input("Weight (in kg) *", min_value=10, max_value=300, key="register_weight")
-        allergies = st.text_input("Allergies (if any)", key="register_allergies")
-        health_conditions = st.text_input("Health Conditions (if any)", key="register_health_conditions")
+        
+        # Modified input for allergies
+        allergies = st.text_area("Allergies (if any, one per line)", key="register_allergies")
+        
+        # Modified input for health conditions
+        health_conditions = st.text_area("Health Conditions (if any, one per line)", key="register_health_conditions")
+        
         activity_level = st.selectbox("Activity Level", ["Low", "Moderate", "High"], key="register_activity_level")
-        dietary_preferences = st.multiselect("Dietary Preferences", ["Vegetarian", "Vegan", "Gluten-Free", "Keto", "Paleo", "No preference"], key="register_dietary_preferences")
-        health_goals = st.selectbox("Health Goals", ["Lose weight", "Gain muscle", "Maintain weight", "Improve stamina", "General well-being"], key="register_health_goals")
+        dietary_preferences = st.selectbox("Dietary Preferences", ["No preference","Vegetarian", "Vegan", "Gluten-Free", "Keto", "Paleo"], key="register_dietary_preferences")
+        health_goals = st.multiselect("Health Goals", ["Lose weight", "Gain muscle", "Maintain weight", "Improve stamina", "General well-being"], key="register_health_goals")
 
         submitted = st.form_submit_button("Register")
 
@@ -358,6 +394,11 @@ def register():
                 st.error("Password must be at least 8 characters long, contain one uppercase letter, one special character, and one digit.")
             else:
                 bmi = calculate_bmi(weight, height)
+                
+                # Process allergies and health conditions
+                allergies_list = [allergy.strip() for allergy in allergies.split('\n') if allergy.strip()]
+                health_conditions_list = [condition.strip() for condition in health_conditions.split('\n') if condition.strip()]
+                
                 user_data = {
                     "name": name,
                     "email": email,
@@ -366,15 +407,16 @@ def register():
                     "height": height,
                     "weight": weight,
                     "bmi": bmi,
-                    "allergies": allergies,
-                    "health_conditions": health_conditions,
+                    "allergies": allergies_list,
+                    "health_conditions": health_conditions_list,
                     "activity_level": activity_level,
                     "dietary_preferences": dietary_preferences,
                     "health_goals": health_goals
                 }
                 customer_collection.insert_one(user_data)
                 st.success(f"Registration successful! Your BMI is {bmi}. Please log in.")
-        
+                return True
+    return False
 def validate_password_strength(password):
     if len(password) < 8:
         return False
@@ -412,16 +454,26 @@ def main():
         st.session_state.analysis_result = None
     if "new_product_info" not in st.session_state:
         st.session_state.new_product_info = None
-
+    if "show_steps" not in st.session_state:
+        st.session_state.show_steps = False
+    if "show_about" not in st.session_state:
+        st.session_state.show_about = False
+    if "prev_page" not in st.session_state:
+        st.session_state.prev_page = "Home"
+    
     selected = navigation()
 
+    if "show_steps" not in st.session_state:
+        st.session_state.show_steps = False
+    if selected != "Home" and st.session_state.prev_page == "Home":
+        st.session_state.show_steps = False
+        st.session_state.show_about = False
+
+    # Update the previous page
+    st.session_state.prev_page = selected
+
     if not st.session_state.logged_in:
-        if st.session_state.page == "Register":
-            register()
-            st.session_state.page = "Home"  # Reset after displaying
-        elif st.session_state.page == "About":
-            about()
-            st.session_state.page = "Home"
+        
         if selected == "Home":
             home()
         elif selected == "About":
@@ -444,19 +496,47 @@ def main():
 
             if update_profile:
                 user = fetch_user_details(st.session_state.user_email)
+                
                 with st.form("profile_update_form"):
+                    st.subheader("Update Your Profile")
+                    
                     name = st.text_input("Name", value=user.get('name', ''))
                     age = st.number_input("Age", value=user.get('age', 0), min_value=1, max_value=120)
                     height = st.number_input("Height (in cm)", value=user.get('height', 0), min_value=50, max_value=250)
                     weight = st.number_input("Weight (in kg)", value=user.get('weight', 0), min_value=10, max_value=300)
-                    allergies = st.text_input("Allergies", value=user.get('allergies', ''))
-                    health_conditions = st.text_input("Health Conditions", value=user.get('health_conditions', ''))
-                    activity_level = st.selectbox("Activity Level", ["Low", "Moderate", "High"], index=["Low", "Moderate", "High"].index(user.get('activity_level', 'Moderate')))
-                    dietary_preferences = st.multiselect("Dietary Preferences", ["Vegetarian", "Vegan", "Gluten-Free", "Keto", "Paleo", "No preference"], default=user.get('dietary_preferences', []))
-                    health_goals = st.selectbox("Health Goals", ["Lose weight", "Gain muscle", "Maintain weight", "Improve stamina", "General well-being"], index=["Lose weight", "Gain muscle", "Maintain weight", "Improve stamina", "General well-being"].index(user.get('health_goals', 'General well-being')))
+                    
+                    # Convert allergies list to string for display
+                    allergies_str = ', '.join(user.get('allergies', []))
+                    allergies = st.text_area("Allergies (one per line)", value=allergies_str)
+                    
+                    # Convert health conditions list to string for display
+                    health_conditions_str = ', '.join(user.get('health_conditions', []))
+                    health_conditions = st.text_area("Health Conditions (one per line)", value=health_conditions_str)
+                    
+                    activity_level = st.selectbox("Activity Level", ["Low", "Moderate", "High"], 
+                                                index=["Low", "Moderate", "High"].index(user.get('activity_level', 'Moderate')))
+                    
+                    dietary_preferences = st.selectbox("Dietary Preferences", 
+                                                    ["Vegetarian", "Vegan", "Gluten-Free", "Keto", "Paleo", "No preference"], 
+                                                    index=["Vegetarian", "Vegan", "Gluten-Free", "Keto", "Paleo", "No preference"].index(user.get('dietary_preferences', 'No preference')))
+                    
+                    # Convert health goals list to indices for multiselect
+                    all_health_goals = ["Lose weight", "Gain muscle", "Maintain weight", "Improve stamina", "General well-being"]
+                    user_health_goals = user.get('health_goals', ['General well-being'])
+                    
+                    # Ensure that user_health_goals only contains valid options
+                    valid_user_health_goals = [goal for goal in user_health_goals if goal in all_health_goals]
+                    
+                    # If no valid goals are found, default to "General well-being"
+                    if not valid_user_health_goals:
+                        valid_user_health_goals = ["General well-being"]
+                    
+                    health_goals = st.multiselect("Health Goals", all_health_goals, default=valid_user_health_goals)
 
+                    # Submit button inside the form
                     update_submitted = st.form_submit_button("Update Profile")
 
+                    # Form processing outside the form
                     if update_submitted:
                         bmi = calculate_bmi(weight, height)
                         updated_data = {
@@ -465,8 +545,8 @@ def main():
                             "height": height,
                             "weight": weight,
                             "bmi": bmi,
-                            "allergies": allergies,
-                            "health_conditions": health_conditions,
+                            "allergies": [allergy.strip() for allergy in allergies.split('\n') if allergy.strip()],
+                            "health_conditions": [condition.strip() for condition in health_conditions.split('\n') if condition.strip()],
                             "activity_level": activity_level,
                             "dietary_preferences": dietary_preferences,
                             "health_goals": health_goals
