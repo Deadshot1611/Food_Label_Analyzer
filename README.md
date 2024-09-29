@@ -32,9 +32,11 @@
 
 give the whole thing is a .md file format like install dependencies then enviorment setup, running the application
 
-## System Architecture
+# System Architecture
 
-![System Architecture](System Architecture/Flowchart.png)
+Below is the system architecture for the LabelWise project.
+
+![System Architecture](https://github.com/Deadshot1611/Food_Label_Analyzer/blob/main/System%20Architecture/Flowchart.png)
 
  # LabelWise: Getting Started Guide
 
