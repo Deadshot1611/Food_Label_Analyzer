@@ -32,6 +32,9 @@
 
 give the whole thing is a .md file format like install dependencies then enviorment setup, running the application
 
+## System Architecture
+
+![System Architecture](System Architecture/Flowchart.png)
 
  # LabelWise: Getting Started Guide
 
