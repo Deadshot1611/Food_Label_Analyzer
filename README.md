@@ -30,7 +30,6 @@
 - **Logout**: 
   - Easily logout and secure your information when done.
 
-give the whole thing is a .md file format like install dependencies then enviorment setup, running the application
 
 # System Architecture
 
